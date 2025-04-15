@@ -1,12 +1,5 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
+# Amazon Q pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -79,9 +72,10 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git asdf macos 1password docker lando vi-mode zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
+# source "$HOME/.zsh/spaceship/spaceship.zsh"
 
 # User configuration
 
@@ -110,8 +104,22 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wpe='wp wpe' # shortcut alias for wpe-cli tool
 alias flushdns='sudo killall -HUP mDNSResponder' # shortcut alias to flush dns
-alias slack='codesign -dr - /Applications/Slack.app && TZ=Australia/Sydney open -b com.tinyspeck.slackmacgap'
+# alias slack='codesign -dr - /Applications/Slack.app && TZ=Australia/Sydney open -b com.tinyspeck.slackmacgap'
 alias vim='nvim'
+alias chtsh='bash /Users/zhickson/cht.sh'
+alias obsidian='cd /Users/zhickson/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/'
+alias so='source ~/.zshrc'
+alias f='bash /Users/zhickson/dotfiles/bin/tmux-sessionizer.sh'
+alias bible='/Users/zhickson/kjv/kjv'
+alias gs='git status'
+alias ga='git add .'
+alias cc='git commit'
+alias gc='git commit'
+alias gp='git push origin'
+# alias f='vim $(fzf)'
+alias c='clear'
+
+alias slack='docker run -it -v ~/.config/slack-term/config:/config erroneousboat/slack-term'
 
 export WP_TESTS_DIR="/Users/zhickson/dev/tmp/wordpress-tests-lib"
 export TMPDIR="/Users/zhickson/dev/tmp"
@@ -127,21 +135,50 @@ export PATH=~/.npm-global/bin:$PATH
 export FZF_DEFAULT_COMMAND="fd"
 
 . "$HOME/.asdf/asdf.sh"
-# append completions to fpath
-fpath=(${ASDF_DIR}/completions $fpath)
-# initialise completions with ZSH's compinit
-autoload -Uz compinit && compinit
 
+# Enable vi mode
+bindkey -v
 
 # Herd injected PHP binary.
 export PATH="/Users/zhickson/Library/Application Support/Herd/bin/":$PATH
+export PATH="$PATH:/Users/zhickson/.composer/vendor/bin"
 
 
 # Herd injected PHP 8.2 configuration.
 export HERD_PHP_82_INI_SCAN_DIR="/Users/zhickson/Library/Application Support/Herd/config/php/82/"
 
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# Setup PyEnv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Herd injected PHP 8.3 configuration.
+export HERD_PHP_83_INI_SCAN_DIR="/Users/zhickson/Library/Application Support/Herd/config/php/83/"
+
+# Herd injected PHP 7.4 configuration.
+export HERD_PHP_74_INI_SCAN_DIR="/Users/zhickson/Library/Application Support/Herd/config/php/74/"
+
+# Herd injected PHP 8.1 configuration.
+export HERD_PHP_81_INI_SCAN_DIR="/Users/zhickson/Library/Application Support/Herd/config/php/81/"
+
+# Herd injected PHP 8.0 configuration.
+export HERD_PHP_80_INI_SCAN_DIR="/Users/zhickson/Library/Application Support/Herd/config/php/80/"
+
+[[ -f "$HOME/fig-export/dotfiles/dotfile.zsh" ]] && builtin source "$HOME/fig-export/dotfiles/dotfile.zsh"
+
+# Herd injected PHP 8.4 configuration.
+export HERD_PHP_84_INI_SCAN_DIR="/Users/zhickson/Library/Application Support/Herd/config/php/84/"
+
+# Shell wrapper for yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
+eval "$(zoxide init zsh)"
