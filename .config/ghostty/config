@@ -12,7 +12,7 @@ keybind = ctrl+z=close_surface
 font-family = "JetBrainsMono Nerd Font"
 
 # Colour scheme
-theme = catppuccin-mocha
+theme = rose-pine-moon
 
 mouse-hide-while-typing = true
 window-save-state = always
